@@ -30,7 +30,7 @@
     {
       "name": "dependencies",
       "type": "multiline",
-      "label": "Script Dependencies",
+      "label": "Dependencies",
       "defaultValue": "",
       "required": false,
       "properties": {
@@ -42,14 +42,14 @@
     {
       "name": "script",
       "type": "multiline",
-      "label": "NodeJS Script",
+      "label": "Script",
       "defaultValue": "",
       "required": true,
       "properties": {
         "resizable": "true",
         "rows": "20"
       },
-      "helpMarkDown": "Content of NodeJS script."
+      "helpMarkDown": "Content of NodeJS script"
     }
   ],
   "execution": {
