@@ -1,0 +1,61 @@
+{
+  "id": "142a5900-1b3f-11e9-a4d0-25bea113d12c",
+  "name": "NodeJsExec",
+  "friendlyName": "Inline NodeJS (Preview)",
+  "description": "Run NodeJS directly from task",
+  "author": "Maciej.Maciejewski",
+  "helpMarkDown": "Replace with markdown to show in help",
+  "category": "Utility",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "0",
+    "Minor": "0",
+    "Patch": "50"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "NodeJS Inline Script",
+  "inputs": [
+    {
+      "name": "cwd",
+      "type": "filePath",
+      "label": "Working Directory",
+      "defaultValue": "$(System.DefaultWorkingDirectory)",
+      "required": true,
+      "helpMarkDown": "Path to directory where script is run"
+    },
+    {
+      "name": "dependencies",
+      "type": "multiline",
+      "label": "Script Dependencies",
+      "defaultValue": "",
+      "required": false,
+      "properties": {
+        "resizable": "true",
+        "rows": "5"
+      },
+      "helpMarkDown": "JSON object containing script dependencies"
+    },
+    {
+      "name": "script",
+      "type": "multiline",
+      "label": "NodeJS Script",
+      "defaultValue": "",
+      "required": true,
+      "properties": {
+        "resizable": "true",
+        "rows": "20"
+      },
+      "helpMarkDown": "Content of NodeJS script."
+    }
+  ],
+  "execution": {
+    "Node": {
+      "target": "index.js",
+      "argumentFormat": ""
+    }
+  }
+}

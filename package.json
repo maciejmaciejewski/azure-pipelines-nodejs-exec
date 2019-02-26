@@ -1,0 +1,25 @@
+{
+  "name": "@finastra/nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "upload": "tfx build tasks upload --task-path .",
+    "debug": "node --inspect-brk index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "acorn-node": "^1.6.2",
+    "fs-extra": "^7.0.1",
+    "hat": "0.0.3",
+    "jshint": "^2.10.1",
+    "syntax-error": "^1.4.0",
+    "vsts-task-lib": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "request": "^2.88.0"
+  }
+}
