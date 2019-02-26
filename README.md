@@ -52,9 +52,11 @@ request('https://jsonplaceholder.typicode.com/todos', function (err, res, body) 
 })
 ```
 
-**YAML Definition**
+**Visual Definition Example**
 
-This task can be defined using YAML notation
+![](./images/task-example.png)
+
+**YAML Definition Example**
 
 ```
 steps:
@@ -85,5 +87,5 @@ steps:
 `0.1.0`
 * Initial preview release
 
-## Feautures ideas
+## Feauture ideas
 * Use custom NPM registry as currently only official npm is supported

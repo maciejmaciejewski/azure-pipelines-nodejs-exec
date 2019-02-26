@@ -1,9 +1,9 @@
 import * as tl from 'vsts-task-lib/task';
 
-const NpmHelper = require('./lib/task-helper').TaskHelper
+const TaskHelper = require('./lib/task-helper').TaskHelper
 async function run() : Promise<void> {
   try {
-    let helper = new NpmHelper()
+    let helper = new TaskHelper()
     await helper.runNode()
   } catch (err) {
     console.log(err)
