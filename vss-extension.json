@@ -1,0 +1,49 @@
+{
+  "manifestVersion": 1,
+  "id": "nodejsexec",
+  "publisher": "MaciejMaciejewski",
+  "version": "0.1.4",
+  "author": "Maciej Maciejewski",
+  "name": "NodeJsExec",
+  "description": "",
+  "public": false,
+  "categories": ["Azure Pipelines"],
+  "icons": {
+    "default": "images/nodejs-icon-large.png"
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/maciejmaciejewski/azure-pipelines-nodejs-exec"
+  },
+  "content": {
+    "details": {
+      "path": "overview.md"
+    },
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "contributions": [
+    {
+      "id": "NodeJsExec",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "Tasks/NodeJsExec",
+        "displayName": "Inline NodeJS"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "./NodeJsExec",
+      "packagePath": "Tasks/NodeJsExec",
+      "addressable": false
+    }
+  ]
+}

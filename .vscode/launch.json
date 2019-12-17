@@ -14,9 +14,9 @@
       ],
       "sourceMaps": true,
       "env": {
-        "INPUT_CWD": "",
-        "INPUT_DEPENDENCIES": "",
-        "INPUT_SCRIPT": "",
+        "INPUT_CWD": "./",
+        "INPUT_DEPENDENCIES": "{\"hat\": \"0.0.3\"}",
+        "INPUT_SCRIPT": "const hat = require('hat'); console.log(`hat = ${hat()}`)",
         "DEBUG":"true"
       },
       "outputCapture": "std"

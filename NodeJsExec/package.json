@@ -1,5 +1,5 @@
 {
-  "name": "@finastra/nodejs",
+  "name": "nodejs-exec",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
