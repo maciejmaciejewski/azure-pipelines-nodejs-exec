@@ -18,6 +18,13 @@
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "NodeJS Inline Script",
+  "groups": [
+    {
+      "displayName": "Custom registries and authentication",
+      "name": "customRegistries",
+      "isExpanded": true
+    }
+  ],
   "inputs": [
     {
       "name": "cwd",
@@ -50,7 +57,39 @@
         "rows": "15"
       },
       "helpMarkDown": "Content of script"
-    }
+    },
+    {
+      "groupName": "customRegistries",
+      "name": "customRegistry",
+      "label": "Registries to use",
+      "helpMarkDown": "You can either commit a .npmrc file to your source code repository and set its path here or select a registry from Azure Artifacts here.",
+      "type": "radio",
+      "options": {
+          "useNpmrc": "Registries in my .npmrc",
+          "useFeed": "Registry I select here"
+      },
+      "defaultValue": "useNpmrc"
+  },
+  {
+      "groupName": "customRegistries",
+      "name": "customFeed",
+      "label": "Use packages from this Azure Artifacts/TFS registry",
+      "helpMarkDown": "Include the selected feed in the generated .npmrc.",
+      "type": "pickList",
+      "visibleRule": "customRegistry = useFeed",
+      "required": true
+  },
+  {
+      "groupName": "customRegistries",
+      "name": "customEndpoint",
+      "label": "Credentials for registries outside this organization/collection",
+      "helpMarkDown": "Credentials to use for external registries located in the project's .npmrc. For registries in this organization/collection, leave this blank; the build’s credentials are used automatically.",
+      "type": "connectedService:externalnpmregistry",
+      "visibleRule": "customRegistry = useNpmrc",
+      "properties": {
+          "MultiSelectFlatList": "true"
+      }
+  }
   ],
   "execution": {
     "Node": {
