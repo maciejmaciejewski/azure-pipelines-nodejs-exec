@@ -7,7 +7,7 @@ steps:
 - task: Npm@1
   displayName: 'NPM: Install Task Dependencies'
   inputs:
-    workingDir: tasks/NodeJsExec
+    workingDir: NodeJsExec
     verbose: false
 
 - task: PackageAzureDevOpsExtension@2
