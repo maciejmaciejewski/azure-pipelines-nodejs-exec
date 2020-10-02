@@ -18,6 +18,7 @@
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "NodeJS Inline Script",
+  "showEnvironmentVariables": true,
   "inputs": [
     {
       "name": "cwd",
