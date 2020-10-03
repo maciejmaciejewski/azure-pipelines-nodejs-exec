@@ -42,7 +42,9 @@ export class TaskHelper {
 
   private getDefaultExecOptions(): tr.IExecOptions  {
     let execOptions = <tr.IExecOptions>{}
-    execOptions.cwd = this.npmPackagePath
+    execOptions.cwd = this.npmPackagePath,
+    execOptions.errStream: process.stdout,
+    execOptions.outStream: process.stdout,
     execOptions.failOnStdErr = false
     execOptions.ignoreReturnCode = false
     execOptions.windowsVerbatimArguments = true
@@ -95,10 +97,20 @@ export class TaskHelper {
     let npmTool = this.initializeTool('npm')
     npmTool.arg(['start'])
 
-    const process = npmTool.execSync(this.getDefaultExecOptions())
+    process.on("SIGINT", () => {
+      tl.debug('Started cancellation of executing script');
+      npmTool.killChildProcess()
+    });
+
+    const process = await npmTool.exec(this.getDefaultExecOptions())
+    if (process.exitCode === null) {
+      throw(new Error('Script execution cancelled'))
+    }
+
     if(process.code !== 0) {
       throw(new Error('Failed to execute script'))
     }
+
     tl.debug('Finished NodeJs script execution')
   }
 
