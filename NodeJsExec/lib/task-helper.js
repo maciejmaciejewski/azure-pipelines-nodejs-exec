@@ -1,13 +1,15 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TaskHelper = void 0;
 const tl = require("azure-pipelines-task-lib/task");
 const hat = require("hat");
 const path_1 = require("path");
@@ -39,8 +41,10 @@ class TaskHelper {
     }
     getDefaultExecOptions() {
         let execOptions = {};
-        execOptions.cwd = this.npmPackagePath;
-        execOptions.failOnStdErr = false;
+        execOptions.cwd = this.npmPackagePath,
+            execOptions.errStream = process.stdout,
+            execOptions.outStream = process.stdout,
+            execOptions.failOnStdErr = false;
         execOptions.ignoreReturnCode = false;
         execOptions.windowsVerbatimArguments = true;
         return execOptions;
@@ -54,18 +58,22 @@ class TaskHelper {
             packageJson.dependencies = JSON.parse(this.dependencies);
         }
         fs_extra_1.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-        this.installDependencies();
     }
     installDependencies() {
-        tl.debug('Initializing NPM tool');
-        this.npmTool = this.initializeTool('npm');
-        this.npmTool.arg('install');
-        tl.debug('Running install command');
-        const process = this.npmTool.execSync(this.getDefaultExecOptions());
-        if (process.code !== 0) {
-            throw (new Error('Failed to install dependencies'));
-        }
-        tl.debug('Finished installing dependencies');
+        return __awaiter(this, void 0, void 0, function* () {
+            tl.debug('Initializing NPM tool');
+            this.npmTool = this.initializeTool('npm');
+            this.npmTool.arg('install');
+            tl.debug('Running install command');
+            const exitCode = yield this.npmTool.exec(this.getDefaultExecOptions());
+            if (exitCode.exitCode === null) {
+                throw (new Error('Script execution cancelled'));
+            }
+            if (exitCode.code !== 0) {
+                throw (new Error('Failed to execute script'));
+            }
+            tl.debug('Finished installing dependencies');
+        });
     }
     prepareScriptFile() {
         // Check syntactic validity of passed script
@@ -81,20 +89,30 @@ class TaskHelper {
         }
     }
     runScript() {
-        tl.debug('Running script');
-        let npmTool = this.initializeTool('npm');
-        npmTool.arg(['start']);
-        const process = npmTool.execSync(this.getDefaultExecOptions());
-        if (process.code !== 0) {
-            throw (new Error('Failed to execute script'));
-        }
-        tl.debug('Finished NodeJs script execution');
+        return __awaiter(this, void 0, void 0, function* () {
+            tl.debug('Running script');
+            let npmTool = this.initializeTool('npm');
+            npmTool.arg(['start']);
+            const exitCode = yield npmTool.exec(this.getDefaultExecOptions());
+            if (exitCode.exitCode === null) {
+                throw (new Error('Script execution cancelled'));
+            }
+            if (exitCode.code !== 0) {
+                throw (new Error('Failed to execute script'));
+            }
+            tl.debug('Finished NodeJs script execution');
+        });
     }
     runNode() {
         return __awaiter(this, void 0, void 0, function* () {
+            process.on("SIGINT", () => {
+                tl.debug('Started cancellation of executing script');
+                this.npmTool.killChildProcess();
+            });
             this.prepareNPMPackage();
+            yield this.installDependencies();
             this.prepareScriptFile();
-            this.runScript();
+            yield this.runScript();
         });
     }
 }

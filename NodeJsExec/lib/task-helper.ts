@@ -11,7 +11,6 @@ export class TaskHelper {
   private dependencies: string
   private script: string
   private npmTool: tr.ToolRunner
-  private nodeTool: tr.ToolRunner
 
   constructor(cwd: string, dependencies: string, script: string) {
     this.cwd = cwd
@@ -43,8 +42,8 @@ export class TaskHelper {
   private getDefaultExecOptions(): tr.IExecOptions  {
     let execOptions = <tr.IExecOptions>{}
     execOptions.cwd = this.npmPackagePath,
-    execOptions.errStream: process.stdout,
-    execOptions.outStream: process.stdout,
+    execOptions.errStream = process.stdout,
+    execOptions.outStream = process.stdout,
     execOptions.failOnStdErr = false
     execOptions.ignoreReturnCode = false
     execOptions.windowsVerbatimArguments = true
@@ -62,19 +61,23 @@ export class TaskHelper {
     }
 
     writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
-    this.installDependencies()
   }
 
-  private installDependencies(): void {
+  private async installDependencies() {
     tl.debug('Initializing NPM tool')
     this.npmTool = this.initializeTool('npm')
     this.npmTool.arg('install')
 
-    tl.debug('Running install command')
-    const process = this.npmTool.execSync(this.getDefaultExecOptions())
-    if(process.code !== 0) {
-      throw(new Error('Failed to install dependencies'))
+    tl.debug('Running npm install command')
+    const exitCode = await this.npmTool.exec(this.getDefaultExecOptions())
+    if (exitCode === null) {
+      throw(new Error('Script execution cancelled'))
     }
+
+    if(exitCode !== 0) {
+      throw(new Error('Failed to execute script'))
+    }
+
     tl.debug('Finished installing dependencies')
   }
 
@@ -92,22 +95,18 @@ export class TaskHelper {
     }
   }
 
-  private runScript(): void {
+  // Execute node script with npm start
+  private async runScript() {
     tl.debug('Running script')
-    let npmTool = this.initializeTool('npm')
-    npmTool.arg(['start'])
+    this.npmTool = this.initializeTool('npm')
+    this.npmTool.arg(['start'])
 
-    process.on("SIGINT", () => {
-      tl.debug('Started cancellation of executing script');
-      npmTool.killChildProcess()
-    });
-
-    const process = await npmTool.exec(this.getDefaultExecOptions())
-    if (process.exitCode === null) {
+    const exitCode = await this.npmTool.exec(this.getDefaultExecOptions())
+    if (exitCode.exitCode === null) {
       throw(new Error('Script execution cancelled'))
     }
 
-    if(process.code !== 0) {
+    if(exitCode.code !== 0) {
       throw(new Error('Failed to execute script'))
     }
 
@@ -115,8 +114,15 @@ export class TaskHelper {
   }
 
   async runNode(): Promise<void> {
+    process.on("SIGINT", () => {
+      tl.debug('Started cancellation of executing script');
+      this.npmTool.killChildProcess()
+      throw(new Error('Task has been canceled'))
+    })
+
     this.prepareNPMPackage()
+    await this.installDependencies()
     this.prepareScriptFile()
-    this.runScript()
+    await this.runScript()
   }
 }

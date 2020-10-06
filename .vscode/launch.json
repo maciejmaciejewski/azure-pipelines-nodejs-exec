@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "NodeJSExec",
-      "program": "${workspaceFolder}\\index.js",
+      "program": "${workspaceFolder}/NodeJSExec/index.js",
       "outFiles": [
           "${workspaceFolder}/**/*.js"
       ],
